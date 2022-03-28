@@ -1,5 +1,5 @@
 ---
-title: API Reference
+title: COINSWITCH API
 
 language_tabs: # must be one of https://git.io/vQNgJ
   - shell
@@ -11,9 +11,6 @@ toc_footers:
   - <a href='#'>Sign Up for a Developer Key</a>
   - <a href='https://github.com/slatedocs/slate'>Documentation Powered by Slate</a>
 
-includes:
-  - errors
-
 search: true
 
 code_clipboard: true
@@ -23,15 +20,267 @@ meta:
     content: Documentation for the Kittn API
 ---
 
-# Introduction
+# Introduction 
 
-Welcome to the Kittn API! You can use our API to access Kittn API endpoints, which can get information on various cats, kittens, and breeds in our database.
+Financial Information eXchange (FIX) protocol is an electronic communications protocol initiated in 1992 for international real-time exchange of information related to the securities transactions and markets. You can use it to receive real-time market data from us and it's an alternative to WebSocket protocol.
 
-We have language bindings in Shell, Ruby, Python, and JavaScript! You can view code examples in the dark area to the right, and you can switch the programming language of the examples with the tabs in the top right.
+You can use it for real-time order management and receiving execution reports from us, and it's an alternative to WebSocket protocol.
 
-This example API documentation page was created with [Slate](https://github.com/slatedocs/slate). Feel free to edit it and use it as a base for your own API's documentation.
+# Implemented Standards:
 
-# Authentication
+<ul>
+
+<li><a href="https://www.fixtrading.org/standards/fix-4-4/">FIX.4.4</a></li>
+
+</ul>
+
+# Messages
+
+All FIX messages are equipped with Standard Header and Trailer, below we will describe what is required in them in accordance with FIX 4.4, the standard that we use.
+
+<h2>Standard Header</h2>
+
+<table>
+  <tr>						
+    <th>Tag</th>
+    <th>Name</th>
+    <th>Description</th>
+  </tr>
+  <tr>
+    <td>8</td>
+    <td>BeginString</td>
+    <td>FIX.4.4</td>
+  </tr>
+  <tr>
+    <td>9</td>
+    <td>BodyLength</td>
+    <td>Message length, in bytes, forward to the CheckSum <10> field</td>
+  </tr>
+  <tr>
+    <td>35</td>
+    <td>MsgType</td>
+    <td>Defines message type</td>
+  </tr>
+  <tr>
+    <td>49</td>
+    <td>SenderCompID</td>
+    <td>Assigned value used to identify message sender</td>
+  </tr>
+  <tr>
+    <td>56</td>
+    <td>TargetCompID</td>
+    <td>Assigned value used to identify message receiver</td>
+  </tr>
+  <tr>
+    <td>34</td>
+    <td>MsgSeqNum</td>
+    <td>Integer message sequence number. Reset on Logon, Logout and Disconnect.</td>
+  </tr>
+  <tr>
+    <td>52</td>
+    <td>SendingTime</td>
+    <td>Time of message transmission always expressed in UTC (Universal Time Coordinated, also known as "GMT")</td>
+  </tr>
+</table>
+
+<h2>Standard Trailer</h2>
+
+<table>
+  <tr>						
+    <th>Tag</th>
+    <th>Name</th>
+    <th>Description</th>
+  </tr>
+  <tr>
+    <td>10</td>
+    <td>CheckSum</td>
+    <td>Three byte, simple checksum. Always the last field in a message, i.e. serves, with the trailing , as the end-of-message delimiter. Always defined as three characters</td>
+  </tr>  
+</table>
+
+<h2>Logon</h2>
+
+First message sent by the client to Coinswitch FIX Gateway after connection to initiate a FIX session. After successful authorization, server will respond with same message type and start delivering market data messages to you.
+
+<table>
+  <tr>						
+    <th>Tag</th>
+    <th>Name</th>
+    <th>Description</th>
+  </tr>
+  <tr>
+    <td>49</td>
+    <td>SenderCompID</td>
+    <td>Your API key</td>
+  </tr>  
+  <tr>
+    <td>56</td>
+    <td>TargetCompID</td>
+    <td>FIXSERVICE</td>
+  </tr>
+  <tr>
+    <td>108</td>
+    <td>HeartBtInt</td>
+    <td>1 (seconds)</td>
+  </tr>
+  <tr>
+    <td>98</td>
+    <td>EncryptMethod</td>
+    <td>0</td>
+  </tr>
+</table>
+
+<h2>Logout</h2>
+
+Message sent by any side to close established session. If received, should be sent back unchanged to confirm session termination.
+
+<h2>Heartbeat</h2>
+
+Message sent by any side after defined amount of seconds in communication silence.
+
+# OEML API
+
+Financial Information eXchange (FIX) protocol is an electronic communications protocol initiated in 1992 for international real-time exchange of information related to securities transactions and markets.
+
+You can use it for real-time order management and receiving execution reports from us, and it's an alternative to WebSocket protocol.
+
+<h2>Implemented Standards:</h2>
+
+<ul>
+
+<li><a href="https://www.fixtrading.org/standards/fix-4-4/">FIX.4.4</a></li>
+<li><a href="https://www.fixtrading.org/standards/fix-5-0-sp-2/">FIX.5.0</a></li>
+<li><a href="https://www.fixtrading.org/standards/session-level-specs/">FIX.1.1</a></li>
+
+</ul>
+
+<h2>Endpoint</h2>
+
+Our sesssion configuration parameters:
+
+<table>
+  <tr>						
+    <th>Parameter</th>
+    <th>Value</th>
+  </tr>
+  <tr>
+    <td>SocketConnectHost</td>
+    <td>k8s-default-fixservi-d1b15c3482-9d59ea28701faacb.elb.ap-south-1.amazonaws.com</td>
+  </tr>  
+  <tr>
+    <td>SocketConnectPort</td>
+    <td>80</td>
+  </tr>
+  <tr>
+    <td>HeartBtInt</td>
+    <td>30 (seconds)</td>
+  </tr>
+  <tr>
+    <td>SenderCompID</td>
+    <td>Your API key</td>
+  </tr>  
+  <tr>
+    <td>TargetCompID</td>
+    <td>FIXSERVICE</td>
+  </tr>
+  <tr>
+    <td>ResetOnLogon</td>
+    <td>Y</td>
+  </tr>
+  <tr>
+    <td>FileLogPath</td>
+    <td>tmp</td>
+  </tr>
+  <tr>
+    <td>DefaultApplVerID</td>
+    <td>7</td>
+  </tr>
+</table>
+
+<h2>Messages</h2>
+
+This section will provide necessary documentation for the FIX protocol messages.
+
+<h2>New Order Single</h2>
+
+<table>
+  <tr>						
+    <th>FIX Field Name</th>
+    <th>Description</th>
+  </tr>
+  <tr>
+    <td>ClOrdID</td>
+    <td>The unique identifier of the order assigned by the client</td>
+  </tr>
+  <tr>
+    <td>OrdType</td>
+    <td>OEML supports only the LIMIT order type. Market orders don't have price protection, and because of that, they are not supported.</td>
+  </tr>
+  <tr>
+    <td>Side</td>
+    <td>Side of order.</td>
+  </tr>
+   <tr>
+    <td>Symbol</td>
+    <td>Exchange symbol</td>
+  </tr>
+  <tr>
+    <td>Price</td>
+    <td>Order price.</td>
+  </tr>
+  <tr>
+    <td>OrderQty</td>
+    <td>Order quantity</td>
+  </tr>
+  <tr>
+    <td>TimeInForce</td>
+    <td>Time in force is a special instruction used when placing a trade to indicate how long an order will remain active before it expires</td>
+  </tr>
+</table>
+
+<h2>Order Cancel Request</h2>
+
+<table>
+  <tr>						
+    <th>FIX Field Name</th>
+    <th>Description</th>
+  </tr>
+  <tr>
+    <td>ClOrdID</td>
+    <td>The unique identifier of the order assigned by the client</td>
+  </tr>
+  <tr>
+    <td>OrdType</td>
+    <td>OEML supports only the LIMIT order type. Market orders don't have price protection, and because of that, they are not supported.</td>
+  </tr>
+  <tr>
+    <td>Side</td>
+    <td>Side of order.</td>
+  </tr>
+   <tr>
+    <td>Symbol</td>
+    <td>Exchange symbol</td>
+  </tr>
+  <tr>
+    <td>Price</td>
+    <td>Order price.</td>
+  </tr>
+  <tr>
+    <td>OrderQty</td>
+    <td>Order quantity</td>
+  </tr>
+  <tr>
+    <td>TimeInForce</td>
+    <td>Time in force is a special instruction used when placing a trade to indicate how long an order will remain active before it expires</td>
+  </tr>
+   <tr>
+    <td>TimeInForce</td>
+    <td>Time in force is a special instruction used when placing a trade to indicate how long an order will remain active before it expires</td>
+  </tr>
+</table>
+
+
+<!-- # Authentication
 
 > To authorize, use this code:
 
@@ -242,4 +491,4 @@ This endpoint deletes a specific kitten.
 Parameter | Description
 --------- | -----------
 ID | The ID of the kitten to delete
-
+ -->
