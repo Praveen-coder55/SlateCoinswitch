@@ -273,9 +273,28 @@ This section will provide necessary documentation for the FIX protocol messages.
     <td>TimeInForce</td>
     <td>Time in force is a special instruction used when placing a trade to indicate how long an order will remain active before it expires</td>
   </tr>
+</table>
+
+<h2>Market Data Request</h2>
+
+<table>
+  <tr>						
+    <th>FIX Field Name</th>
+    <th>Description</th>
+  </tr>
+  <tr>
+    <td>BeginString</td>
+    <td>Type of Protocol used.</td>
+  </tr>
+  <tr>
+    <td>SenderCompID</td>
+    <td>BrokerID requesting the market depth data</td>
+  </tr>
    <tr>
-    <td>TimeInForce</td>
-    <td>Time in force is a special instruction used when placing a trade to indicate how long an order will remain active before it expires</td>
+    <td>TargetCompID</td>
+    <td>FIXSERVICE where market depth data is present</td>
+  </tr>
+ 
   </tr>
 </table>
 
